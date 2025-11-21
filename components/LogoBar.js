@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import '@/styles/logoBar.css'
 
 const LogoBar = () => {
     return (

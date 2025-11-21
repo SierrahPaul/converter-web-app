@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import '@/styles/spotify.css'
 import InputBar from '../components/InputBar'
 import LogoBar from '../components/LogoBar'

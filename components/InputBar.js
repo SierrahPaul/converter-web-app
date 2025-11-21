@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const InputBar = () => {
 
@@ -16,11 +16,13 @@ const InputBar = () => {
 
     return (
                 <div id="input-bar">
+                    <h1>Welcome to the Spotify to YouTube Music Converter</h1>
                     <h4>Please enter the playlist URL and click ‘Generate’</h4>
                     <input type="text" value={inputValue} onChange={handleInputChange} />
-                    <p></p>
-                    
                     {shouldClearButton && <button onClick={handleClearClick}>Clear</button>}
+
+                    <p></p>
+                    <button id="generate-button">Generate</button>
                                     
                 </div>
     )
