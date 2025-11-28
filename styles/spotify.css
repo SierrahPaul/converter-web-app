@@ -1,0 +1,11 @@
+body{
+    background-color: #1DB954;
+    font: Inter, sans-serif;
+}
+
+
+.generate-button{
+    background-color: black;
+    width:250px;
+    height: 65px;
+}

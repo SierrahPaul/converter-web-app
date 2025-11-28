@@ -1,0 +1,26 @@
+
+.logo-bar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.spotify-box{
+    background-color: black;
+    width: 50%;
+    height: 100px;
+}
+
+.youtube-box{
+    background-color: white;
+    width: 50%;
+    height: 100px;
+}
+
+.logo-bar img{
+    width: 45%;
+    max-width: 100%;
+    height: auto;
+}
+
