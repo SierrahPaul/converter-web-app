@@ -1,17 +1,23 @@
-'use client'
-import '@/styles/spotify.css'
-import InputBar from '../components/InputBar'
-import LogoBar from '../components/LogoBar'
+// app/page.tsx  
+import { Button } from '@/components/ui/button';
+import oauth2Client from '@/app/utils/google-auth';
 
-export default function Page(){
+const scopes = ['https://www.googleapis.com/auth/youtube',
+  'https://www.googleapis.com/auth/youtube.readonly'] // optional but harmless
+
+export default function HomePage() {
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    prompt: 'consent',        // forces refresh token every time
+    scope: scopes,
+  });
+
   return (
-    <html lang="en">
-      <body>
-        <div>
-          <LogoBar />
-          <InputBar />
-        </div>
-      </body>
-    </html>
-  )
+    <main className="grid min-h-screen place-items-center">
+      <Button asChild>
+        <a href={authUrl}>Sign in with Google → YouTube</a>
+      </Button>
+    </main>
+  );
 }
+
