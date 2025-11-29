@@ -3,9 +3,38 @@ body{
     font: Inter, sans-serif;
 }
 
+main{
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    height: 50vh;
+}
 
-.generate-button{
-    background-color: black;
-    width:250px;
-    height: 65px;
+.main-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+h1{
+    text-align: center;
+}
+
+h4{
+    text-align: center;
+}
+
+
+.login-button{
+    background-color: red;
+    color: rgb(255, 255, 255);
+    width:350px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    border: 5px solid black;
 }

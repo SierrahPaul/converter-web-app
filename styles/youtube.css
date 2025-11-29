@@ -1,0 +1,27 @@
+body{
+    background-color: #ff0000;
+    font: Inter, sans-serif;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    height: 50vh;
+}
+
+.main-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+h1{
+    text-align: center;
+}
+
+p{
+    text-align: center;
+}

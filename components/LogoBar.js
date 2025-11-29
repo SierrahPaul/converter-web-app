@@ -1,15 +1,18 @@
-
 import '@/styles/logoBar.css'
+
 
 const LogoBar = () => {
     return (
-        <div id="logo-bar">
-            <div id="spotify-box">   
-            <img src="../public/spotifyLogo.png" alt="Spotify Logo" />
+        <div className="logo-bar">
+
+            <div className="logo-block spotify-image">
+                <img src="../images/spotifyLogo.png" alt="Spotify Logo" />
             </div>
-            <div id="youtube-box">
-            <img src="../public/youtubeLogo.jpg" alt="YouTube Logo" />
+            
+            <div className="logo-bar youtube-image">
+                <img src="../images/youtubeLogo.jpg" alt="YouTube Logo" />
             </div>
+
         </div>
     )
 }
