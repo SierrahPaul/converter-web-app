@@ -21,6 +21,7 @@
     width: 100%;
 }
 
+
 img{
     width: 150px;
     max-width: 100%;
@@ -28,4 +29,11 @@ img{
     display: block;
     margin: 0 auto;
 }
+
+.youtube-img{
+    margin: auto;
+    display: block;
+}
+
+
 

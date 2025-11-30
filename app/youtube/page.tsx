@@ -20,11 +20,16 @@ export default function YouTubePage() {
 
                 <main>
                     <div className="main-content">
+                        <h1>Converted Youtube Music Playlist</h1>
                     {status === "success" && imported && url ? (
                         <div className="alert success-alert">
-                            <h1>Success!</h1>
+                            <h2>Success!</h2>
                             <p>Imported {imported} tracks!</p>
-                            <a href={url} target="_blank" className="link">View Playlist on YouTube Music</a>
+                            <p>All playlist are saved to our youtube account, here is your URL</p>
+                            <div className= "playlist-url">
+                                <h4>{url}</h4>
+                            </div>
+                            <a href={url} target="_blank" className="link">View Playlist on YouTube</a>
                         </div>
                     ) : (
                         <div className="alert error-alert">
@@ -33,7 +38,7 @@ export default function YouTubePage() {
                         </div>
                     )}
 
-                    <a href="/dashboard" className="back-link">Convert another playlist!</a>
+                    <a href="/dashboard" className="back-link">Add Another?</a>
                     </div>
                 </main>
             </body>

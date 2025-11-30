@@ -12,7 +12,14 @@ body{
     font-size: 24px;
     display: block;
     margin: 0 auto;
+    border-radius: 5px;
 }
+
+.generate-button:hover{
+    background-color: #1a1919;
+}
+
+
 
 main{
     display: flex;

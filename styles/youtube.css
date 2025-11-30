@@ -20,8 +20,66 @@ main{
 
 h1{
     text-align: center;
+    color: white;
+}
+
+h2{
+    text-align: center;
+    color: white;
+}
+
+h4{
+    text-align: center;
+    color: black;
+}
+
+.playlist-url{
+    background-color: white;
+    border-radius: 5px;
+    margin: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 p{
     text-align: center;
+    color: white;
+}
+
+.link{
+    background-color: black;
+    color: rgb(255, 255, 255);
+    width:250px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    text-decoration: none;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.link:hover{
+    background-color: #1a1919;
+}
+
+.back-link{
+    background-color: black;
+    color: rgb(255, 255, 255);
+    width:250px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    text-decoration: none;
+    display: block;
+    margin: 10 auto;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.back-link:hover{
+    background-color: #1a1919;
 }
