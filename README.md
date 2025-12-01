@@ -63,7 +63,7 @@ The Spotify to YouTube Music converter requires the use of a .env (environment f
 
 Primary Function:
 Takes a URL from public/user-created Spotify playlists and ports them to YouTube playlists. The app does not need Spotify user Authorization, only Google/YouTube to add playlists to your account.
-Just so you know, depending on whether you have the application set up on Google Cloud as published, you may need to add a test user to use the converter; otherwise, the application will not authorize the account to use the converter.  
+While in the testing phase, Google Cloud requires that Google accounts are added as a test user to be able to use the converter. Once published onto Google Cloud, Google users will be able to use the converter without prior authrization by the developers. 
 
 SQLite Caching:
 If playlists with the same YouTube track IDs are added, the IDs are added to the database for faster queries and reduced unit usage for the YouTube API. As the application is currently configured, the number of tracks ported from each playlist is 25 tracks; this is because the YouTube API has a limit of how many query units can be used in a day for a single application (this is for the Google Cloud trial accounts). The SQLite Database allows more usage of the application if similar tracks exist, because YouTube performs fewer queries as a result. The number of uses of the application is roughly 3-5 times a day, depending on whether there are similar tracks involved.  
@@ -73,5 +73,5 @@ UI changes between Spotify and YouTube branding colors, adding emphasis to the c
 
 ## Contributions:
 
-Sierra Paul: handled the frontend styling contributions, including TypeScript, JavaScript, Tailwind CSS, and future web hosting configurations.  
+Sierrah Paul: handled the frontend styling contributions, including TypeScript, JavaScript, Tailwind CSS, and web hosting configurations.  
 Nathan Mosher handled the backend functionality, including .env configuration, JSON, TypeScript routing, SQLite Database configuration, and setup of Spotify/YouTube APIs.
