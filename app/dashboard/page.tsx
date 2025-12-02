@@ -3,15 +3,6 @@
 
 import { useState } from "react";
 import LogoBar from "@/components/LogoBar";
-import "@/styles/dashboard.css";
-import { Inter } from "next/font/google";
-
-//  Inter Bold — safe to import here
-const inter = Inter({
-  subsets: ["latin"],
-  weight: "700",
-  display: "swap",
-});
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(false);
@@ -19,15 +10,7 @@ export default function Dashboard() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-
-    const spotifyUrl = (
-      e.currentTarget.elements.namedItem("spotifyUrl") as HTMLInputElement
-    ).value.trim();
-
-    if (!spotifyUrl) {
-      setLoading(false);
-      return;
-    }
+    const spotifyUrl = (e.currentTarget.elements.namedItem("spotifyUrl") as HTMLInputElement).value.trim();
 
     try {
       const res = await fetch("/api/spotify-to-youtube", {
@@ -35,20 +18,14 @@ export default function Dashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ spotifyUrl }),
       });
-
       const data = await res.json();
       setLoading(false);
 
       if (!res.ok) {
-        window.location.href = `/youtube?status=error&reason=${encodeURIComponent(
-          data.error || "Unknown error"
-        )}`;
+        window.location.href = `/youtube?status=error&reason=${encodeURIComponent(data.error || "Failed")}`;
         return;
       }
-
-      window.location.href = `/youtube?status=success&imported=${data.imported}&url=${encodeURIComponent(
-        data.url
-      )}`;
+      window.location.href = `/youtube?status=success&imported=${data.imported}&url=${encodeURIComponent(data.url)}`;
     } catch {
       setLoading(false);
       window.location.href = "/youtube?status=error&reason=Network+error";
@@ -56,41 +33,38 @@ export default function Dashboard() {
   };
 
   return (
-    <html lang="en" className={inter.className}>
-      {/* added inter font-bold */}
-      <body className="font-bold">
+    <>
+      <header><LogoBar /></header>
 
-        <header>
-          <LogoBar />
-        </header>
+      <main className="min-h-screen flex items-center justify-center px-6 bg-[#1DB954] text-black">
+        <div className="text-center space-y-12 max-w-2xl w-full">
+          <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            Spotify to YouTube Music Converter
+          </h1>
+          <p className="text-xl md:text-2xl text-black/90">
+            Paste your Spotify playlist URL below
+          </p>
 
-        <main>
-          <div className="main-content">
-            <h1>Welcome to the Spotify to YouTube Music Converter</h1>
-            <h4>Please enter the playlist URL and click ‘Generate’</h4>
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <input
+              name="spotifyUrl"
+              type="url"
+              placeholder="https://open.spotify.com/playlist/..."
+              required
+              disabled={loading}
+              className="w-full px-8 py-6 text-xl bg-transparent border-4 border-black rounded-2xl text-white placeholder-black/70 focus:outline-none focus:border-gray-300 transition"
+            />
 
-            <form className="input-form" onSubmit={handleSubmit}>
-              <input
-                name="spotifyUrl"
-                type="url"
-                placeholder="Paste a Spotify playlist URL"
-                required
-                disabled={loading}
-                className="link-input"
-              />
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="generate-button"
-              >
-                {loading ? "Converting…" : "Convert Playlist"}
-              </button>
-            </form>
-          </div>
-        </main>
-
-      </body>
-    </html>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-black text-white hover:bg-gray-900 disabled:opacity-60 font-bold text-2xl py-7 rounded-2xl shadow-2xl transition"
+            >
+              {loading ? "Converting…" : "Convert Playlist"}
+            </button>
+          </form>
+        </div>
+      </main>
+    </>
   );
 }

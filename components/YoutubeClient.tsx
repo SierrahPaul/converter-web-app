@@ -1,17 +1,8 @@
-// app/components/YoutubeClient.tsx
+// app/youtube/page.tsx
 "use client";
 
 import { useSearchParams } from 'next/navigation';
-import '@/styles/youtube.css';
-import LogoBar from '../components/LogoBar';
-import { Inter } from 'next/font/google';
-
-//  Inter Bold, safe here
-const inter = Inter({
-  subsets: ['latin'],
-  weight: '700',
-  display: 'swap',
-});
+import LogoBar from '@/components/LogoBar';
 
 export default function YouTubePage() {
   const params = useSearchParams();
@@ -21,42 +12,47 @@ export default function YouTubePage() {
   const reason = params.get("reason");
 
   return (
-    <html lang="en" className={inter.className}>
-      {/* added inter font-bold */}
-      <body className="font-bold">
+    <>
+      <header><LogoBar /></header>
 
-        <header>
-          <LogoBar />
-        </header>
+      <main className="min-h-screen flex items-center justify-center px-6 bg-[#CD201F] text-white">
+        <div className="text-center space-y-12 max-w-4xl">
+          <h1 className="text-5xl md:text-6xl font-black leading-tight">
+            {status === "success" ? "Playlist Converted!" : "Conversion Failed"}
+          </h1>
 
-        <main>
-          <div className="main-content">
-            <h1>Converted Youtube Music Playlist</h1>
-
-            {status === "success" && imported && url ? (
-              <div className="alert success-alert">
-                <h2>Success!</h2>
-                <p>Imported {imported} tracks!</p>
-                <p>All playlist are saved to our youtube account, here is your URL</p>
-                <div className="playlist-url">
-                  <h4>{url}</h4>
-                </div>
-                <a href={url} target="_blank" rel="noopener noreferrer" className="link">
-                  View Playlist on YouTube
-                </a>
+          {status === "success" && imported && url ? (
+            <div className="space-y-8">
+              <p className="text-2xl md:text-3xl">
+                Successfully imported <span className="text-white font-black">{imported}</span> tracks!
+              </p>
+              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-lg break-all font-mono">
+                {url}
               </div>
-            ) : (
-              <div className="alert error-alert">
-                <h1>Error!</h1>
-                <p>{reason}</p>
-              </div>
-            )}
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-white text-black hover:bg-gray-200 font-bold text-xl px-20 py-9 rounded-2xl shadow-2xl transition"
+              >
+                Open in YouTube Music
+              </a>
+            </div>
+          ) : (
+            <div className="bg-black/30 border-2 border-white rounded-2xl p-10">
+              <h2 className="text-4xl font-black mb-4">Error</h2>
+              <p className="text-xl">{reason ? decodeURIComponent(reason) : "Something went wrong"}</p>
+            </div>
+          )}
 
-            <a href="/dashboard" className="back-link">Add Another?</a>
-          </div>
-        </main>
-
-      </body>
-    </html>
+          <a
+            href="/dashboard"
+            className="inline-block bg-white text-black hover:bg-gray-200 font-bold text-xl px-20 py-9 rounded-2xl shadow-2xl transition"
+          >
+            Convert Another Playlist
+          </a>
+        </div>
+      </main>
+    </>
   );
 }
