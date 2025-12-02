@@ -22,6 +22,7 @@ export default function Dashboard() {
       setLoading(false);
 
       if (!res.ok) {
+        console.error("API error response:", data);  // Log to Vercel console
         window.location.href = `/youtube?status=error&reason=${encodeURIComponent(data.error || "Failed")}`;
         return;
       }
