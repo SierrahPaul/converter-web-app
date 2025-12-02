@@ -6,108 +6,80 @@ import { getVideoId, setVideoId } from "@/app/utils/db";
 
 type Track = { artist: string; title: string };
 
+type SpotifyPlaylistItem = {
+  track: {
+    artists: { name: string }[];
+    name: string;
+  } | null;
+};
+
 export const POST = async (req: Request) => {
   try {
-    const formData = await req.formData();
-    const spotifyUrl = formData.get("spotifyUrl") as string;
+    const { spotifyUrl } = await req.json();
 
-    if (!spotifyUrl?.includes("open.spotify.com/playlist/")) {
-      return NextResponse.json(
-        { error: "Invalid Spotify playlist URL." },
-        { status: 400 }
-      );
+    if (!spotifyUrl || typeof spotifyUrl !== "string") {
+      return NextResponse.json({ error: "Missing Spotify URL" }, { status: 400 });
     }
 
-    // Extract playlist ID
+    if (!spotifyUrl.includes("open.spotify.com/playlist/")) {
+      return NextResponse.json({ error: "Invalid Spotify playlist URL." }, { status: 400 });
+    }
+
     const match = spotifyUrl.match(/playlist\/([a-zA-Z0-9]+)/);
     if (!match) {
-      return NextResponse.json(
-        { error: "Unable to parse playlist ID." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Unable to parse playlist ID" }, { status: 400 });
     }
     const playlistId = match[1];
 
-    // 1. GET SPOTIFY TOKEN
+    // Spotify Token
     let spotifyToken: string;
     try {
       const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic " +
-            Buffer.from(
-              `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
-            ).toString("base64"),
+          Authorization: "Basic " + Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString("base64"),
         },
         body: "grant_type=client_credentials",
       });
-
-      if (!tokenRes.ok) throw new Error("Spotify auth failed");
-      const json = await tokenRes.json();
-      spotifyToken = json.access_token;
+      if (!tokenRes.ok) throw new Error();
+      spotifyToken = (await tokenRes.json()).access_token;
     } catch {
-      return NextResponse.json(
-        { error: "Spotify authentication failed." },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Spotify auth failed" }, { status: 500 });
     }
 
-    // 2. GET YOUTUBE USER TOKENS
-    const cookieStore = await cookies();
-    const tokenStr = cookieStore.get("google_tokens")?.value;
-
-    if (!tokenStr) {
-      return NextResponse.json(
-        { error: "Not logged into YouTube." },
-        { status: 401 }
-      );
-    }
+    // YouTube Auth
+    const tokenStr = (await cookies()).get("google_tokens")?.value;
+    if (!tokenStr) return NextResponse.json({ error: "Not logged into YouTube" }, { status: 401 });
 
     let ytTokens;
     try {
       ytTokens = JSON.parse(tokenStr);
     } catch {
-      return NextResponse.json(
-        { error: "Invalid YouTube token." },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Invalid YouTube token" }, { status: 401 });
     }
 
     const oauth2 = new google.auth.OAuth2();
     oauth2.setCredentials(ytTokens);
+    const youtube = google.youtube({ version: "v3", auth: oauth2 });
 
-    const youtube = google.youtube({
-      version: "v3",
-      auth: oauth2,
-    });
-
-    // 3. CREATE YOUTUBE PLAYLIST
+    // Create Playlist
     let ytPlaylistId: string;
-
     try {
       const res = await youtube.playlists.insert({
         part: ["snippet", "status"],
         requestBody: {
-          snippet: {
-            title: `Spotify → YouTube • ${new Date().toLocaleDateString()}`,
-            description: "Imported automatically from Spotify",
-          },
+          snippet: { title: `Spotify to YouTube • ${new Date().toLocaleDateString()}`, description: "Imported from Spotify" },
           status: { privacyStatus: "public" },
         },
       });
-
       ytPlaylistId = res.data.id!;
     } catch {
-      return NextResponse.json(
-        { error: "Failed to create YouTube playlist." },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create playlist" }, { status: 500 });
     }
 
-    // 4. FETCH TRACKS FROM SPOTIFY (up to ~100)
-    let tracks: Track[] = [];
+    // Fetch Tracks — FULLY TYPED
+    const tracks: Track[] = [];
     let offset = 0;
 
     while (tracks.length < 100) {
@@ -117,64 +89,46 @@ export const POST = async (req: Request) => {
       );
 
       if (!res.ok) break;
+      const data: { items: SpotifyPlaylistItem[]; next: string | null } = await res.json();
 
-      const data = await res.json();
-
-      const chunk: Track[] = (data.items || [])
-        .map((item: any): Track => ({
-          artist: item?.track?.artists?.[0]?.name,
-          title: item?.track?.name,
-        }))
-        .filter((t: Track) => Boolean(t.artist && t.title));
-
-      if (chunk.length === 0) break;
+      const chunk: Track[] = data.items
+        .map((item) => {
+          const artist = item.track?.artists?.[0]?.name?.trim();
+          const title = item.track?.name?.trim();
+          return artist && title ? { artist, title } : null;
+        })
+        .filter((t): t is Track => t !== null);
 
       tracks.push(...chunk);
-
-      if (!data.next) break;
-
+      if (!data.next || chunk.length === 0) break;
       offset += 50;
     }
 
     if (tracks.length === 0) {
-      return NextResponse.json(
-        { error: "No tracks found in playlist." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No tracks found" }, { status: 400 });
     }
 
-
-    // 5. SEARCH + ADD (WITH CACHE)
+    // Add to YouTube
     const addedSet = new Set<string>();
     let addedCount = 0;
 
-    for (const t of tracks) {
+    for (const track of tracks) {
       if (addedCount >= 25) break;
-
-      const key = `${t.artist.toLowerCase()}|${t.title.toLowerCase()}`;
+      const key = `${track.artist}|${track.title}`.toLowerCase();
       if (addedSet.has(key)) continue;
-
-
-      // A. Check cache BEFORE search
 
       let videoId = getVideoId(key);
 
-      // If not cached → perform a YouTube search (costs units)
       if (!videoId) {
         try {
           const search = await youtube.search.list({
             part: ["id"],
-            q: `${t.artist} ${t.title}`,
+            q: `${track.artist} ${track.title}`,
             type: ["video"],
             maxResults: 1,
           });
-
           videoId = search.data.items?.[0]?.id?.videoId || null;
-
-          // If found → save into cache to prevent future quota usage
-          if (videoId) {
-            setVideoId(key, videoId);
-          }
+          if (videoId) setVideoId(key, videoId);
         } catch {
           continue;
         }
@@ -182,23 +136,16 @@ export const POST = async (req: Request) => {
 
       if (!videoId) continue;
 
-
-      // B. Add to playlist
-
       try {
         await youtube.playlistItems.insert({
           part: ["snippet"],
           requestBody: {
             snippet: {
               playlistId: ytPlaylistId,
-              resourceId: {
-                kind: "youtube#video",
-                videoId,
-              },
+              resourceId: { kind: "youtube#video", videoId },
             },
           },
         });
-
         addedSet.add(key);
         addedCount++;
       } catch {
@@ -206,20 +153,12 @@ export const POST = async (req: Request) => {
       }
     }
 
-    const playlistUrl = `https://www.youtube.com/playlist?list=${ytPlaylistId}`;
-
     return NextResponse.json({
       success: true,
       imported: addedCount,
-      url: playlistUrl,
+      url: `https://www.youtube.com/playlist?list=${ytPlaylistId}`,
     });
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        error: "Server error",
-        details: err?.message || String(err),
-      },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 };
