@@ -1,6 +1,6 @@
 import '@/styles/logoBar.css'
 
-
+//components/ui/LogoBar.js
 const LogoBar = () => {
     return (
         <div className="logo-bar">
