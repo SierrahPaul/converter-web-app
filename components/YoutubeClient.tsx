@@ -1,6 +1,6 @@
 // app/youtube/page.tsx
 "use client";
-
+//success/failure page for youtube import
 import { useSearchParams } from 'next/navigation';
 import LogoBar from '@/components/LogoBar';
 

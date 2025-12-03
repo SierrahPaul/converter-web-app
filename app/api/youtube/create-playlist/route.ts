@@ -1,4 +1,5 @@
 // app/api/youtube/create-playlist/route.ts
+// Create a new YouTube playlist via API
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { google } from 'googleapis';
@@ -29,7 +30,7 @@ export async function POST() {
         },
       },
     });
-
+    // Successfully created playlist
     const playlistId = response.data.id;
     const url = `https://www.youtube.com/playlist?list=${playlistId}`;
 

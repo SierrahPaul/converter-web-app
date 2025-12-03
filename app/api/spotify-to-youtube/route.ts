@@ -1,5 +1,5 @@
 // app/api/spotify-to-youtube/route.ts
-export const dynamic = 'force-dynamic'; // vercel caching fix
+//export const dynamic = 'force-dynamic'; // vercel caching fix?
 
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -10,7 +10,7 @@ type Track = { artist: string; title: string };
 
 export const POST = async (req: Request) => {
   try {
-    // FIXED: Use JSON instead of formData()
+    // Used JSON instead of formData()
     const body = await req.json();
     const spotifyUrl: string = body.spotifyUrl;
 

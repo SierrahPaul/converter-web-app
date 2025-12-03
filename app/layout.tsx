@@ -1,7 +1,7 @@
 // app/layout.tsx
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+// set up Inter font with bold weight
 const inter = Inter({
   subsets: ["latin"],
   weight: "700",        // ← 700 = bold
@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.className}>
-      {/* This makes EVERYTHING bold and Inter by default */}
+      {/* bold Inter by default */}
       <body className="font-bold min-h-screen bg-black text-white">
         {children}
       </body>

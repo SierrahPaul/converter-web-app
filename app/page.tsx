@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import oauth2Client from '@/app/utils/google-auth';
 import LogoBar from '../components/LogoBar';
 import '@/styles/spotify.css';
-
+// home page with google oauth2 sign-in button
 const scopes = ['https://www.googleapis.com/auth/youtube', 'https://www.googleapis.com/auth/youtube.readonly'];
-
+// scopes for YouTube playlist management
 export default function HomePage() {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',

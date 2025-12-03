@@ -1,6 +1,6 @@
 // app/dashboard/page.tsx
 "use client";
-
+//dashboard page with spotify url input form
 import { useState } from "react";
 import LogoBar from "@/components/LogoBar";
 
