@@ -1,5 +1,5 @@
 // app/api/spotify-to-youtube/route.ts
-//export const dynamic = 'force-dynamic'; // vercel caching fix?
+export const dynamic = 'force-dynamic'; // vercel caching fix?
 
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
