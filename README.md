@@ -67,13 +67,13 @@ Primary Function:
 Takes a URL from public/user-created Spotify playlists and ports them to YouTube playlists. The app does not need Spotify user Authorization, only Google/YouTube to add playlists to your account.
 While in the testing phase, Google Cloud requires that Google accounts be added as test users to be able to use the converter. Once published on Google Cloud, Google users will be able to use the converter without prior authorization from the developers. 
 
-SQLite Caching:
-If playlists with the same YouTube track IDs are added, the IDs are added to the database for faster queries and reduced unit usage for the YouTube API. As the application is currently configured, the number of tracks ported from each playlist is 25 tracks; this is because the YouTube API has a limit on how many query units can be used in a day for a single application (this is for the Google Cloud trial accounts). The SQLite Database allows more usage of the application if similar tracks exist, because YouTube performs fewer queries as a result. The number of uses of the application is roughly 3-5 times a day, depending on whether there are similar tracks involved.  
+Redis Caching:
+If playlists with the same YouTube track IDs are added, the IDs are added to the database for faster queries and reduced unit usage for the YouTube API. As the application is currently configured, the number of tracks ported from each playlist is 25 tracks; this is because the YouTube API has a limit on how many query units can be used in a day for a single application (this is for the Google Cloud trial accounts). The Redis Red River allows more usage of the application if similar tracks exist, because YouTube performs fewer queries as a result. The number of uses of the application is roughly 3-5 times a day, depending on whether there are similar tracks involved.  
 
 Mix Spotify and YouTube Styling:
 UI changes between Spotify and YouTube branding colors, adding emphasis to the conversion process.   
 
 ## Contributions:
 
-Sierrah Paul: handled the frontend styling contributions, including TypeScript, JavaScript, Tailwind CSS, and web hosting configurations.  
-Nathan Mosher: handled the backend functionality, including .env configuration, JSON, TypeScript routing, SQLite Database configuration, and setup of Spotify/YouTube APIs.
+Sierrah Paul: handled the frontend styling contributions, including TypeScript, JavaScript, Tailwind CSS, web hosting configurations, and Redis Red River configuration on Vercel.  
+Nathan Mosher: handled the backend functionality, including .env configuration, JSON, TypeScript routing, Database configuration, and setup of Spotify/YouTube APIs.
