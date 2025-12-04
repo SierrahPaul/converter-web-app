@@ -4,8 +4,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { google } from "googleapis";
-//import { getVideoId, setVideoId } from "@/app/utils/db";
-import {kv} from "@vercel/kv";
+import { getVideoId, setVideoId } from "@/app/utils/db";
+import { get } from "http";
 
 type Track = { artist: string; title: string };
 
@@ -121,7 +121,7 @@ export const POST = async (req: Request) => {
       if (addedKeys.has(key)) continue;
 
       //let videoId = getVideoId(key);
-      let videoId = await kv.get<string>(`video:${key}`);
+      let videoId = await getVideoId(key);
 
       if (!videoId) {
         try {
@@ -135,7 +135,7 @@ export const POST = async (req: Request) => {
           videoId = search.data.items?.[0]?.id?.videoId || null;
          
           if (videoId){
-            await kv.set(`video:${key}`, videoId);
+            await setVideoId(key, videoId);
           }
         } catch (e) {
           console.warn(`Search failed: ${track.artist} - ${track.title}`, e);
